@@ -1,0 +1,48 @@
+{
+  "untamed": [
+    {
+      "number": "01",
+      "place": "Cloud Recesses",
+      "title": "The first collision",
+      "image": "assets/images/collage.png",
+      "note": "Write your own scene note here: the rules, the rooftop, the beginning of a memory."
+    },
+    {
+      "number": "02",
+      "place": "On the road",
+      "title": "Side by side",
+      "image": "assets/images/untamed.png",
+      "note": "Use this card for a favourite live-action moment and your own commentary about why it matters."
+    },
+    {
+      "number": "03",
+      "place": "Years between",
+      "title": "The melody remembers",
+      "image": "assets/images/grid.png",
+      "note": "A memory does not have to be chronological to hurt. Add the later scenes you want to preserve."
+    }
+  ],
+  "donghua": [
+    {
+      "number": "01",
+      "place": "Gusu",
+      "title": "A noisy beginning",
+      "image": "assets/images/rabbits.png",
+      "note": "Anime archive mode: replace this image with a still you have permission to use, then write your own scene summary."
+    },
+    {
+      "number": "02",
+      "place": "Night hunt",
+      "title": "Two paths crossing",
+      "image": "assets/images/grid.png",
+      "note": "Add a donghua moment here. The site automatically changes the archive palette when MDZS is selected."
+    },
+    {
+      "number": "03",
+      "place": "Return",
+      "title": "Recognition",
+      "image": "assets/images/collage.png",
+      "note": "Build the animation timeline from your favourite moments, using your own captions and credited images."
+    }
+  ]
+}

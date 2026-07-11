@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>忘羡 — a memory archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,500&family=DM+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/archive.css">
+<link rel="stylesheet" href="css/quiz.css">
+</head>
+<body>
+<div class="noise"></div><div class="fade"></div>
+<audio id="ambience" loop><source src="assets/audio/ambience.mp3" type="audio/mpeg"></audio>
+<button id="sound" class="sound">♫ ambience</button>
+
+<!-- 1: animation only -->
+<section class="page active" id="prologue">
+  <div class="cinema"></div><div class="fog f1"></div><div class="fog f2"></div>
+  <div class="prologue-mark">忘<br>羡</div>
+  <button class="memory-trigger" data-page="remember" aria-label="Open memory">
+    <span class="ring"></span><small>touch the memory</small>
+  </button>
+  <p class="corner">A PRIVATE ARCHIVE · 云深不知处</p>
+</section>
+
+<!-- 2: remember -->
+<section class="page" id="remember">
+  <div class="remember-image"></div>
+  <div class="remember-copy">
+    <p class="kicker">THE MELODY WAS NEVER LOST</p>
+    <h1>remember<br><i>wangxian.</i></h1>
+    <p>Some memories return as faces.<br>Some return as music.</p>
+    <button class="line-btn" data-page="choice">I REMEMBER <b>→</b></button>
+  </div>
+  <p class="ghost-cn">忘羡</p>
+</section>
+
+<!-- 3: choice -->
+<section class="page paper" id="choice">
+  <header><button data-page="remember">← BACK</button><span>MEMORY / 00</span></header>
+  <div class="choice-heading"><small>SELECT AN ARCHIVE</small><h2>Which memory<br>did you keep?</h2></div>
+  <div class="doors">
+    <button class="door donghua" data-world="donghua">
+      <div class="door-img"></div><span>01</span><div><em>魔道祖师</em><h3>MO DAO ZU SHI</h3><p>ink / animation / red thread</p></div>
+    </button>
+    <button class="door untamed" data-world="untamed">
+      <div class="door-img"></div><span>02</span><div><em>陈情令</em><h3>THE UNTAMED</h3><p>film / fog / blue hour</p></div>
+    </button>
+  </div>
+</section>
+
+<!-- 4: password -->
+<section class="page" id="seal">
+  <div class="seal-bg"></div><header><button data-page="choice">← BACK</button><span>SEALED / 忘</span></header>
+  <main class="seal-card" id="sealCard">
+    <div class="seal-stamp">忘</div><small>LAN WANGJI ASKS</small>
+    <h2>“What was the melody called?”</h2>
+    <form id="passform"><input id="pass" placeholder="the forgotten word..." autocomplete="off"><button>UNSEAL →</button></form>
+    <p id="passmsg" aria-live="polite">the strings wait in silence.</p>
+  </main>
+</section>
+
+<!-- 5: archive menu -->
+<section class="page" id="archive">
+  <aside><button data-page="archive" class="logo">忘羡</button><span id="worldmark">陈情令</span><p>MEMORY ARCHIVE</p></aside>
+  <main class="archive-shell">
+    <header><span id="worldtitle">THE UNTAMED ARCHIVE</span><div class="header-actions"><button id="searchOpen">SEARCH ⌕</button><button data-page="choice">CHANGE MEMORY ↗</button></div></header>
+    <div class="memory-room" id="memoryRoom">
+      <div class="room-copy"><small>THE MEMORY OPENS / 00</small><h1>Wander<br>through <i>what remained.</i></h1><p>Move through the room. A memory will answer when you approach it.</p></div>
+      <div class="memory-orbs">
+        <button class="memory-orb orb-1" data-page="timeline" data-search="timeline years cloud recesses lan wangji wei wuxian melody"><b>01</b><span>TIMELINE<small>the years between</small></span></button>
+        <button class="memory-orb orb-2" data-page="story" data-search="story wangxian two paths melody storyline"><b>02</b><span>STORY<small>two paths, one melody</small></span></button>
+        <button class="memory-orb orb-3" data-page="pictures" data-search="pictures gallery photos edits images memories"><b>03</b><span>PICTURES<small>things the eye kept</small></span></button>
+        <button class="memory-orb orb-4" data-page="chaos" data-search="chaos memes funny yiling patriarch wei wuxian"><b>04</b><span>CHAOS<small>memes. obviously.</small></span></button>
+        <button class="memory-orb orb-5" data-page="quiz" data-search="quiz cultivation rules personality examination"><b>05</b><span>QUIZ<small>the archive examines you</small></span></button>
+        <button class="memory-orb orb-6" data-page="rabbits" data-search="rabbit rabbits bunny symbolism myth folklore"><b>06</b><span>RABBITS<small>symbol / myth / softness</small></span></button>
+      </div>
+      <p class="room-whisper">hover / focus a memory · click to enter</p>
+    </div>
+  </main>
+</section>
+
+<section class="page inner" id="timeline">
+  <div class="inner-top"><button data-page="archive">← ARCHIVE</button><span>01 / TIMELINE</span></div>
+  <div class="section-head"><small>A CHRONOLOGY OF REMEMBERING</small><h1>Before.<br><i>After.</i><br>Again.</h1></div>
+  <div id="timelineCards" class="timeline"></div>
+</section>
+
+<section class="page inner cream" id="story">
+ <div class="inner-top"><button data-page="archive">← ARCHIVE</button><span>02 / STORY</span></div>
+ <div class="story-grid"><div><small>TWO PATHS / ONE MELODY</small><h1>A story told<br>in <i>returns.</i></h1><p class="big-copy">Not every memory arrives in order. Some begin with rain. Some with a rooftop. Some with a name spoken after too many years.</p></div><img loading="lazy" src="assets/images/grid.png" alt="Wangxian fan edit"><p class="columns">This room is for your own storyline notes and scene commentary. Write what happened in your own words, then add why the moment stayed with you. Keeping the prose personal makes the archive feel like a memory book rather than a wiki page.<br><br><b>EDIT ME:</b> open index.html and search for “EDIT ME”. Replace this paragraph with your own storyline.</p></div>
+</section>
+
+<section class="page inner" id="pictures">
+ <div class="inner-top"><button data-page="archive">← ARCHIVE</button><span>03 / PICTURES</span></div>
+ <div class="section-head"><small>THE EYE REMEMBERS TOO</small><h1>Fragments<br><i>of them.</i></h1></div>
+ <div class="gallery">
+  <figure><img loading="lazy" src="assets/images/collage.png" alt="Fan collage"><figcaption>MEMORY 001 <span>Canva edit by site creator · underlying media belongs to respective rights holders</span></figcaption></figure>
+  <figure><img loading="lazy" src="assets/images/untamed.png" alt="The Untamed fan edit"><figcaption>MEMORY 002 <span>Canva edit by site creator · underlying media belongs to respective rights holders</span></figcaption></figure>
+  <figure><img loading="lazy" src="assets/images/grid.png" alt="Wangxian grid edit"><figcaption>MEMORY 003 <span>Canva edit by site creator · underlying media belongs to respective rights holders</span></figcaption></figure>
+ </div>
+</section>
+
+<section class="page inner red" id="chaos">
+ <div class="inner-top"><button data-page="archive">← ARCHIVE</button><span>04 / CHAOS</span></div>
+ <div class="chaos-title"><small>THE YILING PATRIARCH HAS ENTERED THE CSS</small><h1>memes.<br>obviously.</h1><p>Add your own meme files to <code>assets/images</code>. Then duplicate a <code>&lt;figure&gt;</code> from the pictures screen. The dramatic red is intentional. Wei Wuxian was left unsupervised.</p></div>
+</section>
+
+<section class="page inner blue" id="quiz">
+ <div class="inner-top"><button data-page="archive">← ARCHIVE</button><span>05 / QUIZ</span></div>
+ <div class="quiz-stage">
+   <div class="quiz-intro" id="quizIntro">
+     <p class="quiz-chapter">AN EXAMINATION IN SIX MEMORIES</p>
+     <p class="quiz-symbol">問</p>
+     <h1>What kind of<br><i>cultivator are you?</i></h1>
+     <p class="quiz-lede">No correct answers. The archive is only listening.</p>
+     <button id="startQuiz" class="quiz-start">BEGIN THE EXAMINATION <span>→</span></button>
+   </div>
+   <div class="quiz-runner" id="quizRunner" hidden>
+     <div class="quiz-progress"><span id="quizCount">MEMORY 01 / 06</span><div><i id="quizBar"></i></div></div>
+     <p id="quizScene" class="quiz-scene"></p>
+     <h2 id="quizQuestion"></h2>
+     <div id="quizAnswers" class="quiz-answers"></div>
+   </div>
+   <div class="quiz-ending" id="quizEnding" hidden>
+     <p class="quiz-chapter">THE ARCHIVE HAS DECIDED</p>
+     <p id="resultCn" class="result-cn"></p>
+     <h1 id="resultTitle"></h1>
+     <p id="resultText" class="result-text"></p>
+     <div id="resultTraits" class="result-traits"></div>
+     <button id="restartQuiz" class="quiz-start">ASK THE ARCHIVE AGAIN ↻</button>
+   </div>
+ </div>
+</section>
+
+<section class="page inner cream" id="rabbits">
+ <div class="inner-top"><button data-page="archive">← ARCHIVE</button><span>06 / RABBITS</span></div>
+ <div class="rabbit-layout"><img loading="lazy" src="assets/images/rabbits.png" alt="Rabbit mythology Canva design"><div><small>SYMBOL / MYTH / SOFTNESS</small><h1>The rabbit<br><i>archive.</i></h1><p>In late-imperial Chinese sources, Tu’er Shen is associated with male same-sex love; modern scholarship also discusses “rabbit” language in histories of male-male sexuality. That broader folklore history is separate from canon, but it gives you a beautiful research lane for a fan archive about rabbit imagery.</p><p class="source-note">RESEARCH NOTE — link your factual sources here before publishing. Suggested starting points are in README.txt.</p></div></div>
+</section>
+
+<div id="rareMemory" class="rare-memory" aria-live="polite" aria-hidden="true">
+  <p id="rareMemoryText"></p>
+</div>
+<div id="lightbox" class="lightbox" aria-hidden="true"><button id="lightboxClose">CLOSE ×</button><img loading="lazy" id="lightboxImg" alt=""></div>
+<div id="searchPanel" class="search-panel" aria-hidden="true">
+  <button id="searchClose">CLOSE ×</button>
+  <small>SEARCH THE ARCHIVE / 索引</small>
+  <input id="archiveSearch" placeholder="rabbits, Lan Wangji, melody..." autocomplete="off">
+  <div id="searchResults" class="search-results"><p>Type a memory to begin.</p></div>
+</div>
+<script src="js/app.js" defer></script>
+<script src="js/navigation.js" defer></script>
+<script src="js/timeline.js" defer></script>
+<script src="js/audio.js" defer></script>
+<script src="js/gallery.js" defer></script>
+<script src="js/search.js" defer></script>
+<script src="js/quiz.js" defer></script>
+</body></html>

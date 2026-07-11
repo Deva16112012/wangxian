@@ -1,0 +1,3 @@
+let timelineData={};
+window.renderTimeline=function(){const rows=timelineData[WX.world]||[];document.getElementById("timelineCards").innerHTML=rows.map(x=>`<article><small>${x.number} / ${x.place}</small><div><h2>${x.title}</h2><p>${x.note}</p><p class="credit">FAN EDIT BY SITE CREATOR · UNDERLYING MEDIA: RESPECTIVE RIGHTS HOLDERS</p></div><img loading="lazy" src="${x.image}" alt=""></article>`).join("")}
+fetch("data/timeline.json").then(r=>r.json()).then(data=>{timelineData=data;renderTimeline()}).catch(()=>{document.getElementById("timelineCards").innerHTML="<p>Timeline could not be loaded. Open with Live Server or GitHub Pages.</p>"});
