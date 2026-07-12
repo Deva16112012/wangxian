@@ -1,195 +1,126 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#050607">
-  <title>忘羡 — remember</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/memory.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>忘羡 — remember</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Mono:wght@300&family=Noto+Serif+SC:wght@300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/memory.css">
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
-  <div id="thought" class="thought" aria-hidden="true"><span></span></div>
+<div class="grain"></div><div class="clouds"></div><div id="veil"></div>
+<div id="thought" aria-hidden="true"></div>
+<audio id="ambience" loop preload="auto"><source src="assets/audio/ambience.mp3" type="audio/mpeg"></audio>
 
-  <button id="sound" class="sound hidden" type="button" aria-label="Toggle ambience">sound, remembered</button>
-
-  <main>
-    <section id="opening" class="screen active opening">
-      <div class="opening-copy">
-        <p class="line l1">Some stories end.</p>
-        <p class="ellipsis l2">...</p>
-        <p class="line l3">And then,<br>somehow,</p>
-        <p class="line italic l4">you keep returning to them.</p>
-        <div class="return-question l5">
-          <p>Do you want to go back?</p>
-          <button data-action="remember">I remember.</button>
-          <button data-action="not-yet">Not yet.</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="gone" class="screen gone" aria-hidden="true"></section>
-
-    <section id="world" class="screen world" aria-hidden="true">
-      <div class="quiet-center">
-        <p>Then tell me—</p>
-        <h1>where did you<br><i>first find them?</i></h1>
-        <div class="world-choices">
-          <button data-world="donghua"><span>魔道祖师</span>Mo Dao Zu Shi</button>
-          <button data-world="untamed"><span>陈情令</span>The Untamed</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="seal" class="screen seal" aria-hidden="true">
-      <div class="seal-image"></div>
-      <div class="seal-copy">
-        <p>Memories blur with time.</p>
-        <h1>What was this one called?</h1>
-        <form id="sealForm" autocomplete="off">
-          <input id="sealInput" aria-label="Name the memory" spellcheck="false">
-          <button type="submit">remember</button>
-        </form>
-        <p id="sealMessage" class="seal-message"></p>
-      </div>
-    </section>
-
-    <section id="threshold" class="screen threshold" aria-hidden="true">
-      <p>Ah.</p>
-      <p><i>You do remember.</i></p>
-    </section>
-
-    <section id="memory" class="screen memory" aria-hidden="true">
-      <nav class="memory-nav" aria-label="Memory navigation">
-        <button data-jump="memory-top">remember.</button>
-        <button data-jump="faces">faces.</button>
-        <button data-jump="moments">moments.</button>
-        <button data-jump="music">music.</button>
-        <button id="searchOpen" class="nav-search" type="button" aria-label="Search memories">⌕</button>
-      </nav>
-
-      <div id="memory-top" class="memory-flow">
-        <section class="first-memory reveal">
-          <div class="cloud-image memory-bg"></div>
-          <div class="first-words">
-            <p>You already know what happens.</p>
-            <h1>Stay anyway.</h1>
-          </div>
-        </section>
-
-        <section class="breath reveal">
-          <p class="whisper">Somewhere between the first note<br>and the last goodbye,</p>
-          <p class="large-memory">they stayed.</p>
-        </section>
-
-        <section class="image-memory reveal searchable" data-search="wei wuxian laughing smile wei ying untamed">
-          <figure class="drift-card left">
-            <img src="assets/images/untamed.png" alt="A Wangxian memory">
-            <figcaption>Someone laughing.</figcaption>
-          </figure>
-          <p class="side-thought">You remember<br>the sound of it.</p>
-        </section>
-
-        <section id="faces" class="faces reveal">
-          <header class="soft-heading">
-            <p>Some expressions</p>
-            <h2>never left.</h2>
-          </header>
-          <div class="loose-photos">
-            <figure class="photo p1 searchable" data-search="faces wangxian collage memory">
-              <img src="assets/images/collage.png" alt="Faces remembered">
-              <figcaption>Maybe this one first.</figcaption>
-            </figure>
-            <figure class="photo p2 searchable" data-search="lan wangji wei wuxian faces the untamed">
-              <img src="assets/images/grid.png" alt="Wangxian fragments">
-              <figcaption>Or this.</figcaption>
-            </figure>
-            <figure class="photo p3 searchable" data-search="rabbits softness cloud recesses">
-              <img src="assets/images/rabbits.png" alt="Rabbit imagery">
-              <figcaption>Some things became symbols later.</figcaption>
-            </figure>
-          </div>
-        </section>
-
-        <section id="moments" class="moments">
-          <header class="soft-heading reveal">
-            <p>It happened</p>
-            <h2>like this.</h2>
-          </header>
-          <div class="moment-path">
-            <article class="moment reveal searchable" data-search="cloud recesses gusu first meeting">
-              <span>01</span><div><h3>Cloud Recesses.</h3><p>Before either of them knew what would remain.</p></div>
-            </article>
-            <article class="moment reveal searchable" data-search="cave xuanwu cave">
-              <span>02</span><div><h3>The cave.</h3><p>A song, before its name meant everything.</p></div>
-            </article>
-            <article class="moment reveal searchable" data-search="sunshot campaign war">
-              <span>03</span><div><h3>Sunshot Campaign.</h3><p>Things changed. They noticed.</p></div>
-            </article>
-            <article class="moment reveal searchable" data-search="burial mounds yiling patriarch">
-              <span>04</span><div><h3>Burial Mounds.</h3><p>You already know this part.</p></div>
-            </article>
-            <article class="moment reveal searchable" data-search="sixteen years return reunion">
-              <span>05</span><div><h3>Sixteen years.</h3><p>And still, recognition.</p></div>
-            </article>
-            <article class="moment reveal searchable" data-search="temple guanyin temple ending">
-              <span>06</span><div><h3>The temple.</h3><p>Some truths arrive very late.</p></div>
-            </article>
-          </div>
-        </section>
-
-        <section class="quote-memory reveal searchable" data-search="lan zhan wei ying quote things they said">
-          <p>Things they said.</p>
-          <h2>Things you heard<br>differently the second time.</h2>
-        </section>
-
-        <section id="music" class="music-memory reveal searchable" data-search="music guqin flute wangxian sound melody">
-          <div class="music-image"></div>
-          <div class="music-copy">
-            <p>You remember</p>
-            <h2>the sound.</h2>
-            <button id="musicButton" type="button">let it return</button>
-          </div>
-        </section>
-
-        <section id="quiz" class="stayed reveal">
-          <p>After all this time...</p>
-          <h2>who stayed with you?</h2>
-          <button id="quizStart" type="button">I think I know.</button>
-          <div id="quizBox" class="quiz-box hidden">
-            <p id="quizProgress"></p>
-            <h3 id="quizQuestion"></h3>
-            <div id="quizAnswers"></div>
-          </div>
-          <div id="quizResult" class="quiz-result hidden"></div>
-        </section>
-
-        <section class="last-memory reveal">
-          <p>Maybe you came back<br>because you missed them.</p>
-          <p>Maybe you missed<br>who you were when you found them.</p>
-          <p class="final-line">Come back later.</p>
-          <span>忘羡</span>
-        </section>
-      </div>
-    </section>
-  </main>
-
-  <div id="search" class="search-layer" aria-hidden="true">
-    <button id="searchClose" type="button" aria-label="Close search">×</button>
-    <div class="search-inner">
-      <label for="searchInput">What are you trying to remember?</label>
-      <input id="searchInput" placeholder="Lotus Pier... Guqin... Wei Wuxian laughing...">
-      <div id="searchResults"></div>
+<main>
+<section id="opening" class="screen active opening">
+  <div class="opening-copy">
+    <p class="line l1">Some stories end.</p>
+    <p class="line l2">...</p>
+    <div class="line l3"><p>And then,</p><p>somehow,</p></div>
+    <p class="line l4 italic">you keep returning to them.</p>
+    <div class="return-question line l5">
+      <p>Do you want to go back?</p>
+      <button data-go="world">I remember.</button><button data-gone>Not yet.</button>
     </div>
   </div>
+</section>
 
-  <audio id="ambience" loop preload="none">
-    <source src="assets/audio/ambience.mp3" type="audio/mpeg">
-  </audio>
+<section id="gone" class="screen gone" aria-hidden="true"></section>
 
-  <script src="js/memory.js"></script>
+<section id="world" class="screen" aria-hidden="true">
+  <div class="quiet-center">
+    <p>Then tell me—</p>
+    <h1>where did you<br>first find them?</h1>
+    <div class="world-choices">
+      <button data-world="donghua"><span>魔道祖师</span>Mo Dao Zu Shi</button>
+      <button data-world="untamed"><span>陈情令</span>The Untamed</button>
+    </div>
+  </div>
+</section>
+
+<section id="seal" class="screen seal" aria-hidden="true">
+  <div class="seal-image"></div>
+  <div class="seal-copy">
+    <p>Memories blur with time.</p>
+    <h1>What was this<br>one called?</h1>
+    <form id="sealForm">
+      <input id="sealInput" autocomplete="off" aria-label="Name the memory">
+      <button>remember</button>
+    </form>
+    <p id="sealMessage" class="seal-message"></p>
+  </div>
+</section>
+
+<section id="threshold" class="screen threshold" aria-hidden="true">
+  <p>Ah.</p><p>You do remember.</p>
+</section>
+
+<section id="memory" class="screen memory" aria-hidden="true">
+  <button id="sound" class="sound" aria-label="Toggle sound">sound, remembered</button>
+  <div class="memory-flow">
+    <section class="hero memory-piece">
+      <img data-img="hero" alt="">
+      <div class="hero-copy reveal"><p>You already know what happens.</p><h1>Stay anyway.</h1></div>
+    </section>
+
+    <section class="whisper memory-piece reveal">
+      <p>Somewhere between the first note<br>and the last goodbye,</p>
+      <p>they stayed.</p>
+    </section>
+
+    <figure class="fragment left reveal"><img data-img="laugh" alt="A remembered face"><figcaption>Someone laughing.</figcaption></figure>
+
+    <section class="tiny-interaction memory-piece reveal">
+      <p>You remember the sound of it.</p>
+      <button id="noteButton">listen.</button>
+      <span id="noteReply"></span>
+    </section>
+
+    <figure class="fragment right reveal"><img data-img="soft" alt="A softer memory"><figcaption>Some things became symbols later.</figcaption></figure>
+
+    <section class="song memory-piece reveal">
+      <img data-img="song" alt="">
+      <div><p>The sound arrives<br>before the scene does.</p><button id="songButton">let it return</button></div>
+    </section>
+
+    <section class="embedded-seal memory-piece reveal">
+      <div class="seal-mark">忘羡</div>
+      <p>Some names survive<br>being forgotten.</p>
+    </section>
+
+    <figure class="fragment wide reveal"><img data-img="choice" alt="A difficult memory"><figcaption>You remember the choice.</figcaption></figure>
+
+    <section class="question memory-piece reveal">
+      <p>After all this time...</p>
+      <h2>who stayed with you?</h2>
+      <button id="quizStart">I think I know.</button>
+      <div id="quizBox" class="hidden">
+        <p id="quizQuestion"></p><div id="quizAnswers"></div>
+      </div>
+      <p id="quizResult" class="quiz-result hidden"></p>
+    </section>
+
+    <section class="river memory-piece">
+      <figure class="r1 reveal"><img data-img="river1" alt=""></figure>
+      <figure class="r2 reveal"><img data-img="river2" alt=""></figure>
+      <figure class="r3 reveal"><img data-img="river3" alt=""></figure>
+      <p class="reveal">Some memories<br>do not need words.</p>
+    </section>
+
+    <figure class="fragment narrow reveal"><img data-img="walk" alt="Two figures remembered"><figcaption>And somehow, beside each other again.</figcaption></figure>
+
+    <section id="ending" class="ending memory-piece">
+      <p class="end e1">...</p>
+      <p class="end e2">Some stories end.</p>
+      <div class="end e3"><p>And then,</p><p>somehow,</p></div>
+      <p class="end e4 italic">you keep returning to them.</p>
+    </section>
+  </div>
+</section>
+</main>
+<script src="js/memory.js"></script>
 </body>
 </html>
