@@ -1,0 +1,144 @@
+/* V7 — returning to a memory */
+
+.rare-memory {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: block;
+  background: transparent;
+  color: #e9e6df;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: none;
+}
+
+.rare-memory p {
+  position: absolute;
+  left: var(--flicker-x, 72vw);
+  top: var(--flicker-y, 72svh);
+  width: min(300px, 72vw);
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font: italic clamp(1rem, 2vw, 1.45rem) var(--serif);
+  letter-spacing: .03em;
+  opacity: 0;
+  filter: blur(2px);
+  transform: translate(-50%, -50%) rotate(var(--flicker-tilt, 0deg));
+}
+
+.rare-memory.show {
+  opacity: 1;
+  visibility: visible;
+  animation: memory-ghost 1.15s steps(1, end) both;
+}
+
+.rare-memory.show p {
+  animation: memory-text-ghost 1.15s ease both;
+}
+
+@keyframes memory-ghost {
+  0%, 7%, 18%, 31%, 100% { opacity: 0; }
+  9%, 15% { opacity: .2; }
+  22%, 27% { opacity: .62; }
+  35%, 68% { opacity: .28; }
+  72%, 78% { opacity: .1; }
+}
+
+@keyframes memory-text-ghost {
+  0% { opacity: 0; filter: blur(3px); }
+  20% { opacity: .35; filter: blur(.8px); }
+  32% { opacity: .75; filter: blur(0); }
+  65% { opacity: .3; filter: blur(.4px); }
+  100% { opacity: 0; filter: blur(3px); }
+}
+
+/* Seal: keep the entire interaction together on phones. */
+#seal .seal-card {
+  box-sizing: border-box;
+}
+
+#seal #passform {
+  width: min(620px, 100%);
+}
+
+@media (max-width: 760px) {
+  #seal {
+    min-height: 100svh;
+    overflow-y: auto;
+  }
+
+  #seal header {
+    position: relative;
+    z-index: 4;
+  }
+
+  #seal .seal-card {
+    min-height: calc(100svh - 68px);
+    width: 100%;
+    padding: 36px 22px max(32px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  #seal .seal-stamp {
+    margin-inline: auto;
+  }
+
+  #seal .seal-card > small,
+  #seal .seal-card > h2,
+  #seal #passmsg {
+    text-align: center;
+  }
+
+  #seal .seal-card > h2 {
+    font-size: clamp(2.25rem, 11vw, 3.8rem);
+    line-height: .95;
+    margin: 24px auto 30px;
+    max-width: 520px;
+  }
+
+  #seal #passform {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 0 auto;
+  }
+
+  #seal #passform input,
+  #seal #passform button {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 54px;
+  }
+
+  #seal #passform input {
+    font-size: 16px;
+  }
+
+  #seal #passform button {
+    position: static;
+    margin: 0;
+    padding: 15px 18px;
+  }
+
+  #seal #passmsg {
+    min-height: 1.5em;
+    margin-top: 18px;
+  }
+
+  .rare-memory p {
+    width: min(250px, 68vw);
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rare-memory.show,
+  .rare-memory.show p {
+    animation-duration: .01ms;
+  }
+}
