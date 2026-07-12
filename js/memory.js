@@ -1,187 +1,252 @@
-const pages=[...document.querySelectorAll(".page")];
-const veil=document.getElementById("veil");
-let world="untamed";
-let unsealed=false;
-let ghostBusy=false;
-let ghostTimer;
+const screens = [...document.querySelectorAll(".screen")];
+const ambience = document.getElementById("ambience");
+const sound = document.getElementById("sound");
+const thought = document.getElementById("thought");
+const thoughtText = thought.querySelector("span");
 
-const timelineData={
-  untamed:[
-    {number:"01",place:"Cloud Recesses",title:"The first collision",image:"assets/images/collage.png",note:"The rules. The rooftop. The beginning of a memory you did not yet know you would keep."},
-    {number:"02",place:"On the road",title:"Side by side",image:"assets/images/untamed.png",note:"Somewhere along the way, seeing them together stopped feeling temporary."},
-    {number:"03",place:"Years between",title:"The melody remembers",image:"assets/images/grid.png",note:"You know what recognition means now. The first time, you did not."}
-  ],
-  donghua:[
-    {number:"01",place:"Gusu",title:"A noisy beginning",image:"assets/images/rabbits.png",note:"Before you knew what every glance would become, there was only the beginning."},
-    {number:"02",place:"Night hunt",title:"Two paths crossing",image:"assets/images/grid.png",note:"A remembered voice. A familiar argument. Two paths repeatedly finding the same road."},
-    {number:"03",place:"Return",title:"Recognition",image:"assets/images/collage.png",note:"The strange ache of returning to a scene when you already understand everything it means."}
-  ]
-};
+let world = null;
+let memoryOpen = false;
+let thoughtBusy = false;
+let thoughtTimer;
 
-const ghostLines=[
-  "…Wei Ying.",
+const thoughts = [
   "Lan Zhan.",
+  "Wei Ying.",
+  "Don't skip this part.",
   "You remember what happens next.",
   "Was it always this quiet?",
-  "Don't skip this part.",
-  "The melody was never forgotten.",
-  "You knew this scene once.",
-  "Somewhere, you are watching it for the first time.",
-  "Ah. This part.",
-  "You stayed.",
-  "They are still here.",
-  "The first time is gone. The memory is not."
+  "Come back later.",
+  "...",
+  "The melody was never lost."
 ];
 
-function showPage(id){
-  pages.forEach(p=>p.classList.remove("active"));
-  document.getElementById(id)?.classList.add("active");
-  scrollTo(0,0);
+function show(id) {
+  screens.forEach(screen => {
+    const active = screen.id === id;
+    screen.classList.toggle("active", active);
+    screen.setAttribute("aria-hidden", String(!active));
+  });
+  window.scrollTo(0, 0);
 }
-function go(id){
-  veil.classList.remove("go"); void veil.offsetWidth; veil.classList.add("go");
-  setTimeout(()=>showPage(id),480);
-  if(unsealed && !["prologue","return","goodbye","choice","seal","threshold"].includes(id)) rollGhost();
-}
-document.addEventListener("click",e=>{
-  const target=e.target.closest("[data-go]");
-  if(target) go(target.dataset.go);
+
+document.querySelector('[data-action="remember"]').addEventListener("click", () => show("world"));
+document.querySelector('[data-action="not-yet"]').addEventListener("click", () => show("gone"));
+
+document.querySelectorAll("[data-world]").forEach(button => {
+  button.addEventListener("click", () => {
+    world = button.dataset.world;
+    document.body.dataset.world = world;
+    const input = document.getElementById("sealInput");
+    input.placeholder = world === "donghua" ? "name the animation..." : "name the drama...";
+    document.getElementById("sealMessage").textContent = "";
+    show("seal");
+    setTimeout(() => input.focus(), 600);
+  });
 });
 
-document.getElementById("notYet").addEventListener("click",()=>go("goodbye"));
-
-document.querySelectorAll("[data-world]").forEach(button=>button.addEventListener("click",()=>{
-  world=button.dataset.world;
-  document.body.dataset.world=world;
-  document.getElementById("worldmark").textContent=world==="donghua"?"魔道祖师":"陈情令";
-  document.getElementById("worldtitle").textContent=world==="donghua"?"MO DAO ZU SHI · A MEMORY":"THE UNTAMED · A MEMORY";
-  document.getElementById("pass").placeholder=world==="donghua"?"name the animation...":"name the drama...";
-  renderTimeline();
-  go("seal");
-  setTimeout(()=>document.getElementById("pass").focus(),700);
-}));
-
-const normalize=value=>value.trim().toLowerCase().replace(/[\s_-]+/g,"");
-const passwords={
-  donghua:["modaozushi","魔道祖师","魔道祖師"],
-  untamed:["theuntamed","陈情令","陳情令"]
+const normalize = value => value.trim().toLowerCase().replace(/[\s_-]+/g, "");
+const passwords = {
+  donghua: ["modaozushi", "魔道祖师", "魔道祖師"],
+  untamed: ["theuntamed", "陈情令", "陳情令"]
 };
-document.getElementById("passform").addEventListener("submit",e=>{
-  e.preventDefault();
-  const input=document.getElementById("pass");
-  const msg=document.getElementById("passmsg");
-  if(passwords[world].map(normalize).includes(normalize(input.value))){
-    msg.textContent="ah. you do remember.";
-    unsealed=true;
-    input.value="";
-    setTimeout(()=>go("threshold"),650);
-    scheduleGhost();
-  }else{
-    msg.textContent="no… that is not the memory you chose.";
-    input.value="";
+
+document.getElementById("sealForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const input = document.getElementById("sealInput");
+  const message = document.getElementById("sealMessage");
+  const okay = (passwords[world] || []).map(normalize).includes(normalize(input.value));
+
+  if (!okay) {
+    message.textContent = "Not that one.";
+    input.value = "";
     input.focus();
+    return;
+  }
+
+  message.textContent = "";
+  show("threshold");
+  setTimeout(() => {
+    show("memory");
+    memoryOpen = true;
+    sound.classList.remove("hidden");
+    ambience.volume = 0.34;
+    ambience.play().catch(() => {});
+    scheduleThought();
+    observeMemories();
+  }, 3400);
+});
+
+sound.addEventListener("click", async () => {
+  if (ambience.paused) {
+    await ambience.play().catch(() => {});
+    sound.textContent = "sound, remembered";
+  } else {
+    ambience.pause();
+    sound.textContent = "silence";
   }
 });
 
-function renderTimeline(){
-  document.getElementById("timelineList").innerHTML=timelineData[world].map(item=>`
-    <article>
-      <b>${item.number}</b>
-      <div><small>${item.place}</small><h2>${item.title}</h2><p>${item.note}</p></div>
-      <img src="${item.image}" alt="">
-    </article>`).join("");
-}
-renderTimeline();
-
-function showGhost(){
-  if(!unsealed||ghostBusy)return;
-  ghostBusy=true;
-  const box=document.getElementById("ghostMemory");
-  const text=document.getElementById("ghostText");
-  text.textContent=ghostLines[Math.floor(Math.random()*ghostLines.length)];
-  box.style.setProperty("--x",`${10+Math.random()*78}vw`);
-  box.style.setProperty("--y",`${12+Math.random()*72}svh`);
-  box.style.setProperty("--tilt",`${-3+Math.random()*6}deg`);
-  box.classList.remove("show"); void box.offsetWidth; box.classList.add("show");
-  setTimeout(()=>{box.classList.remove("show");ghostBusy=false},1450);
-}
-function rollGhost(){if(Math.random()<.05)showGhost()}
-function scheduleGhost(){
-  clearTimeout(ghostTimer);
-  ghostTimer=setTimeout(()=>{rollGhost();scheduleGhost()},12000+Math.random()*18000);
-}
-
-const audio=document.getElementById("ambience");
-const sound=document.getElementById("sound");
-let soundOn=localStorage.getItem("wx-sound")==="on";
-async function syncSound(){
-  if(soundOn){try{await audio.play();sound.textContent="♫ ambience · on"}catch{soundOn=false}}
-  if(!soundOn){audio.pause();sound.textContent="♫ ambience"}
-}
-sound.addEventListener("click",()=>{soundOn=!soundOn;localStorage.setItem("wx-sound",soundOn?"on":"off");syncSound()});
-syncSound();
-
-document.querySelectorAll(".gallery img").forEach(img=>img.addEventListener("click",()=>{
-  document.getElementById("lightboxImage").src=img.src;
-  document.getElementById("lightbox").classList.add("open");
-}));
-document.getElementById("closeLightbox").addEventListener("click",()=>document.getElementById("lightbox").classList.remove("open"));
-
-const searchPanel=document.getElementById("searchPanel");
-const searchInput=document.getElementById("searchInput");
-const searchResults=document.getElementById("searchResults");
-const searchable=[
-  ["timeline","moments before after again cloud recesses melody recognition"],
-  ["story","story rain rooftop melody years returns"],
-  ["pictures","faces pictures fragments eye collage"],
-  ["chaos","laughter memes chaos wei wuxian"],
-  ["quiz","who stayed cultivator questions memory"],
-  ["rabbits","rabbits symbol myth softness folklore"]
-];
-document.getElementById("openSearch").addEventListener("click",()=>{
-  searchPanel.classList.add("open"); searchPanel.setAttribute("aria-hidden","false"); setTimeout(()=>searchInput.focus(),50);
-});
-document.getElementById("closeSearch").addEventListener("click",()=>searchPanel.classList.remove("open"));
-searchInput.addEventListener("input",()=>{
-  const q=searchInput.value.trim().toLowerCase();
-  searchResults.innerHTML=!q?"":searchable.filter(([,text])=>text.includes(q)).map(([id])=>`<button class="search-result" data-result="${id}">return to ${id} →</button>`).join("");
-});
-searchResults.addEventListener("click",e=>{
-  const result=e.target.closest("[data-result]"); if(!result)return;
-  searchPanel.classList.remove("open"); go(result.dataset.result);
+document.getElementById("musicButton").addEventListener("click", async () => {
+  await ambience.play().catch(() => {});
+  sound.textContent = "sound, remembered";
 });
 
-const quiz=[
-  ["When a memory hurts, you…",["hold it quietly","make a joke","ask why","turn it into a promise"]],
-  ["Choose a place.",["a silent library","a crowded market","a mountain path","somewhere no one knows me"]],
-  ["Someone you love is in danger.",["stand beside them","act first","find the truth","protect everyone I can"]],
-  ["Which stays longest?",["a song","a laugh","a question","a kindness"]],
-  ["You are misunderstood.",["say nothing","get louder","prove them wrong","keep going"]],
-  ["At the end, you hope to…",["be remembered","be free","understand","return home"]]
-];
-const results=[
-  ["LAN WANGJI","You remember in silence. What stays with you becomes something steady—almost sacred."],
-  ["WEI WUXIAN","You keep warmth alive by refusing to let grief have the final word."],
-  ["LAN XICHEN","You look for the truth between what people say and what they cannot."],
-  ["WEN NING","Your memory returns to gentleness: the quiet courage of staying kind."]
-];
-let qi=0,scores=[0,0,0,0];
-function startQuiz(){qi=0;scores=[0,0,0,0];document.getElementById("quizIntro").hidden=true;document.getElementById("quizResult").hidden=true;document.getElementById("quizGame").hidden=false;drawQuiz()}
-function drawQuiz(){
-  document.getElementById("progress").textContent=`MEMORY ${String(qi+1).padStart(2,"0")} / 06`;
-  document.getElementById("question").textContent=quiz[qi][0];
-  document.getElementById("answers").innerHTML=quiz[qi][1].map((a,i)=>`<button data-answer="${i}">${a}</button>`).join("");
+function flashThought() {
+  if (!memoryOpen || thoughtBusy) return;
+  thoughtBusy = true;
+  thoughtText.textContent = thoughts[Math.floor(Math.random() * thoughts.length)];
+  thought.style.setProperty("--x", `${10 + Math.random() * 80}vw`);
+  thought.style.setProperty("--y", `${12 + Math.random() * 76}svh`);
+  thought.style.setProperty("--r", `${-2 + Math.random() * 4}deg`);
+  thought.classList.remove("flash");
+  void thought.offsetWidth;
+  thought.classList.add("flash");
+  setTimeout(() => {
+    thought.classList.remove("flash");
+    thoughtBusy = false;
+  }, 1100);
 }
-document.getElementById("answers").addEventListener("click",e=>{
-  const a=e.target.closest("[data-answer]");if(!a)return;
-  scores[+a.dataset.answer]++;qi++;
-  if(qi<quiz.length)drawQuiz();else{
-    const winner=scores.indexOf(Math.max(...scores));
-    document.getElementById("quizGame").hidden=true;
-    document.getElementById("quizResult").hidden=false;
-    document.getElementById("resultTitle").textContent=results[winner][0];
-    document.getElementById("resultText").textContent=results[winner][1];
+
+function rollThought() {
+  if (Math.random() < 0.05) flashThought();
+}
+
+function scheduleThought() {
+  clearTimeout(thoughtTimer);
+  thoughtTimer = setTimeout(() => {
+    rollThought();
+    scheduleThought();
+  }, 90000 + Math.random() * 150000);
+}
+
+document.querySelectorAll("[data-jump]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.getElementById(button.dataset.jump)?.scrollIntoView({behavior:"smooth"});
+    rollThought();
+  });
+});
+
+function observeMemories() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add("visible");
+    });
+  }, {threshold: 0.16});
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+}
+
+const search = document.getElementById("search");
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+
+document.getElementById("searchOpen").addEventListener("click", () => {
+  search.classList.add("open");
+  search.setAttribute("aria-hidden", "false");
+  setTimeout(() => searchInput.focus(), 100);
+});
+document.getElementById("searchClose").addEventListener("click", closeSearch);
+function closeSearch() {
+  search.classList.remove("open");
+  search.setAttribute("aria-hidden", "true");
+  searchInput.value = "";
+  searchResults.innerHTML = "";
+}
+
+const searchable = [...document.querySelectorAll(".searchable")];
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.trim().toLowerCase();
+  searchResults.innerHTML = "";
+  if (!q) return;
+  searchable
+    .filter(el => `${el.dataset.search || ""} ${el.textContent}`.toLowerCase().includes(q))
+    .slice(0, 8)
+    .forEach(el => {
+      const button = document.createElement("button");
+      const heading = el.querySelector("h2,h3,figcaption,p");
+      button.textContent = heading?.textContent.trim() || "A memory";
+      button.addEventListener("click", () => {
+        closeSearch();
+        el.scrollIntoView({behavior:"smooth", block:"center"});
+      });
+      searchResults.appendChild(button);
+    });
+  if (!searchResults.children.length) {
+    searchResults.innerHTML = "<p style='color:#777;font:italic 18px var(--serif)'>Maybe not today.</p>";
   }
 });
-document.getElementById("beginQuiz").addEventListener("click",startQuiz);
-document.getElementById("restartQuiz").addEventListener("click",startQuiz);
+
+const quiz = [
+  {
+    q:"When everything becomes too loud, what do you keep?",
+    a:[
+      ["The rule I know is right.","lan"],
+      ["The person everyone else misunderstood.","wei"],
+      ["The people I can still protect.","jiang"],
+      ["The truth, even if I say little.","wen"]
+    ]
+  },
+  {
+    q:"What returns to you first?",
+    a:[
+      ["A melody.","lan"],
+      ["A laugh.","wei"],
+      ["A place that used to be home.","jiang"],
+      ["A quiet act of kindness.","wen"]
+    ]
+  },
+  {
+    q:"You know the ending. Why do you stay?",
+    a:[
+      ["Because devotion changes the meaning of it.","lan"],
+      ["Because joy survived somehow.","wei"],
+      ["Because grief deserves to be remembered.","jiang"],
+      ["Because small choices mattered.","wen"]
+    ]
+  }
+];
+
+const results = {
+  lan:"Lan Wangji stayed with you. Maybe it was the quiet. Maybe it was everything the quiet contained.",
+  wei:"Wei Wuxian stayed with you. Some people remain as laughter first, and ache second.",
+  jiang:"Jiang Cheng stayed with you. Home, grief, anger—some memories refuse to become simple.",
+  wen:"Wen Ning stayed with you. Perhaps you remembered the gentleness that survived."
+};
+
+let qi = 0;
+let scores = {lan:0,wei:0,jiang:0,wen:0};
+const quizBox = document.getElementById("quizBox");
+const quizResult = document.getElementById("quizResult");
+
+document.getElementById("quizStart").addEventListener("click", event => {
+  event.currentTarget.classList.add("hidden");
+  quizBox.classList.remove("hidden");
+  qi = 0;
+  scores = {lan:0,wei:0,jiang:0,wen:0};
+  renderQuiz();
+});
+
+function renderQuiz() {
+  const item = quiz[qi];
+  document.getElementById("quizProgress").textContent = `${String(qi+1).padStart(2,"0")} / ${String(quiz.length).padStart(2,"0")}`;
+  document.getElementById("quizQuestion").textContent = item.q;
+  const answers = document.getElementById("quizAnswers");
+  answers.innerHTML = "";
+  item.a.forEach(([label,key]) => {
+    const button = document.createElement("button");
+    button.textContent = label;
+    button.addEventListener("click", () => {
+      scores[key]++;
+      qi++;
+      if (qi < quiz.length) renderQuiz();
+      else finishQuiz();
+    });
+    answers.appendChild(button);
+  });
+}
+
+function finishQuiz() {
+  quizBox.classList.add("hidden");
+  const winner = Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+  quizResult.textContent = results[winner];
+  quizResult.classList.remove("hidden");
+}
